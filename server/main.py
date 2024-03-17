@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 import asyncpg
 
+
 # ======================================== database setup =========================================
 
 # Database connection details
@@ -49,16 +50,27 @@ async def root():
     
 # get request to get the count of products in the database
 # your code here
+@app.get("/products/count")
+async def get_count():
+    try:
+        number = await app.state.db.fetchval("SELECT COUNT(*) FROM products")
+        return {"product_count": number}
+    except Exception as error:
+        print(error)
+        raise HTTPException(status_code=500, detail="Count was not returned properly.")
+
 
 # get request to get all products in the database
 # your code here
 
+
 # get request to get a product by its id
 # your code here
+
 
 # ======================================== run the app =========================================
     
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=5001, reload=True)
 
 # ==============================================================================================
