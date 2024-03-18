@@ -62,6 +62,16 @@ async def get_count():
 
 # get request to get all products in the database
 # your code here
+@app.get("/products")
+async def get_products(limit: int, page: int):
+    try:
+        offset = ( page - 1 ) * limit
+        query = await app.state.db.fetch("SELECT * FROM products LIMIT $1 OFFSET $2", limit, offset)
+        return {"products": query}
+    except Exception as error:
+        print(error)
+        raise HTTPException(status_code=500, detail="Error getting pagination.")
+
 
 # get request to get a product by its id
 # your code here
