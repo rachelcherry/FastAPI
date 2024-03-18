@@ -54,7 +54,7 @@ async def root():
 async def get_count():
     try:
         number = await app.state.db.fetchval("SELECT COUNT(*) FROM products")
-        return {"product_count": number}
+        return {"prod_count": number}
     except Exception as error:
         print(error)
         raise HTTPException(status_code=500, detail="Count was not returned properly.")
@@ -63,9 +63,21 @@ async def get_count():
 # get request to get all products in the database
 # your code here
 
-
 # get request to get a product by its id
 # your code here
+@app.get("/products/{prod_id}")
+async def get_ID(prod_id : int):
+    try:
+        id = await app.state.db.fetchrow("SELECT * FROM products WHERE id=$1", prod_id)
+        if id is None:
+            raise HTTPException(status_code=404, detail="product was not found.")
+        else:
+            return {"product_id": id}
+    
+    except Exception as error:
+        print(error)
+        raise HTTPException(status_code=500, detail="Error getting product.")
+
 
 
 # ======================================== run the app =========================================
