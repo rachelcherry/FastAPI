@@ -50,27 +50,27 @@ async def root():
     
 # get request to get the count of products in the database
 # your code here
-@app.get("/products/count")
+@app.get("/products/count") # sets the route
 async def get_count():
     try:
-        number = await app.state.db.fetchval("SELECT COUNT(*) FROM products")
-        return {"prod_count": number}
-    except Exception as error:
+        number = await app.state.db.fetchval("SELECT COUNT(*) FROM products") # query to get the count from the products list
+        return {"prod_count": number} # return the number of total products
+    except Exception as error: # if the number is not able to be fetched
         print(error)
-        raise HTTPException(status_code=500, detail="Count was not returned properly.")
+        raise HTTPException(status_code=500, detail="Count was not returned properly.") # throw a status 500 error 
 
 
 # get request to get all products in the database
 # your code here
-@app.get("/products")
-async def get_products(limit: int, page: int):
+@app.get("/products") # sets the route
+async def get_products(limit: int, page: int): 
     try:
-        offset = ( page - 1 ) * limit
-        query = await app.state.db.fetch("SELECT * FROM products LIMIT $1 OFFSET $2", limit, offset)
-        return {"products": query}
-    except Exception as error:
+        offset = ( page - 1 ) * limit # sets the offset for each page to be whatever page we are on minus one times the limit. This will ensure that we are selecting the correct products
+        query = await app.state.db.fetch("SELECT * FROM products LIMIT $1 OFFSET $2", limit, offset) # query to get the products according to the limit and offset 
+        return {"products": query} # return the products according to the pagination
+    except Exception as error: # if any of the above steps do not work (i.e. server error)
         print(error)
-        raise HTTPException(status_code=500, detail="Error getting pagination.")
+        raise HTTPException(status_code=500, detail="Products with pagination were not returned correctly") # throw a states 500 error
 
 
 # get request to get a product by its id
@@ -78,15 +78,15 @@ async def get_products(limit: int, page: int):
 @app.get("/products/{prod_id}")
 async def get_ID(prod_id : int):
     try:
-        id = await app.state.db.fetchrow("SELECT * FROM products WHERE id=$1", prod_id)
-        if id is None:
-            raise HTTPException(status_code=404, detail="product was not found.")
+        id = await app.state.db.fetchrow("SELECT * FROM products WHERE id=$1", prod_id) # query to get the product according to the product id given
+        if id is None: # if the id does not exist 
+            raise HTTPException(status_code=404, detail="product was not found.") # throw a status 404 error, which shows that the product cannot be found
         else:
-            return {"product_id": id}
+            return {"product_id": id} # if the id can be found, then return the product specified
     
-    except Exception as error:
+    except Exception as error: # if any of the above steps do not work (i.e. server error)
         print(error)
-        raise HTTPException(status_code=500, detail="Error getting product.")
+        raise HTTPException(status_code=500, detail="Product was not returned correctly") # throw a status 500 error 
 
 
 
