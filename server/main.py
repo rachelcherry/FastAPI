@@ -63,7 +63,7 @@ async def get_count():
 # get request to get all products in the database
 # your code here
 @app.get("/products") # sets the route
-async def get_products(limit: int = 10, page: int = 1): 
+async def get_products(limit: int =10, page: int = 1): 
     try:
         offset = ( page - 1 ) * limit # sets the offset for each page to be whatever page we are on minus one times the limit. This will ensure that we are selecting the correct products
         query = await app.state.db.fetch("SELECT * FROM products LIMIT $1 OFFSET $2", limit, offset) # query to get the products according to the limit and offset 
